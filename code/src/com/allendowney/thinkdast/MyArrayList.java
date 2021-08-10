@@ -1,10 +1,6 @@
 package com.allendowney.thinkdast;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * @author downey
@@ -44,8 +40,13 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public boolean add(T element) {
-		// TODO: FILL THIS IN!
-		return false;
+		if(array.length <= size){
+			T [] bigger = (T []) new Object[array.length * 2];
+			System.arraycopy(array, 0, bigger, 0,array.length);
+			array = bigger;
+		}
+		array[size++] = element;
+		return true;
 	}
 
 	@Override
@@ -110,7 +111,18 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public int indexOf(Object target) {
-		// TODO: FILL THIS IN!
+		if (target == null) {
+			for(int i = 0; i < size; i++) {
+				if (array[i] == null)
+					return i;
+			}
+
+		} else {
+		for(int i = 0; i < size; i++) {
+			if (array[i].equals(target))
+				return i;
+		}
+		}
 		return -1;
 	}
 
@@ -181,8 +193,14 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public T remove(int index) {
-		// TODO: FILL THIS IN!
-		return null;
+		if(index < 0 || index >= size)
+			throw new IndexOutOfBoundsException();
+		T lastElement = array[index];
+		for(int i = index + 1; i < size; i++){
+			array[i - 1] = array[i];
+		}
+		size--;
+		return lastElement;
 	}
 
 	@Override
@@ -201,8 +219,11 @@ public class MyArrayList<T> implements List<T> {
 
 	@Override
 	public T set(int index, T element) {
-		// TODO: FILL THIS IN!
-		return null;
+		if(index < 0 || index >= size)
+			throw new IndexOutOfBoundsException();
+		T lastElement = array[index];
+		array[index] = element;
+		return lastElement;
 	}
 
 	@Override
