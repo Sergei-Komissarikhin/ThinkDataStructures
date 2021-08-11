@@ -3,11 +3,7 @@
  */
 package com.allendowney.thinkdast;
 
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.ListIterator;
+import java.util.*;
 
 /**
  * @author downey
@@ -65,7 +61,6 @@ public class MyLinkedList<E> implements List<E> {
 		mll.remove(new Integer(2));
 		System.out.println(Arrays.toString(mll.toArray()) + " size = " + mll.size());
 	}
-
 	@Override
 	public boolean add(E element) {
 		if (head == null) {
@@ -82,7 +77,13 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public void add(int index, E element) {
-		//TODO: FILL THIS IN!
+		if(index == 0){
+			head = new Node(element, head);
+		}else {
+			Node node = getNode(index - 1);
+			node.next = new Node(element, node.next);
+		}
+		size++;
 	}
 
 	@Override
@@ -143,7 +144,11 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public int indexOf(Object target) {
-		//TODO: FILL THIS IN!
+		for(int i = 0; i < size; i++){
+			if(equals(target,getNode(i).data)){
+				return i;
+			}
+		}
 		return -1;
 	}
 
@@ -208,8 +213,16 @@ public class MyLinkedList<E> implements List<E> {
 
 	@Override
 	public E remove(int index) {
-		//TODO: FILL THIS IN!
-		return null;
+		E old = get(index);
+		if(index == 0){
+			head = head.next;
+		}else {
+			Node node = getNode(index - 1);
+			node.next = getNode(index + 1);
+		}
+		size--;
+
+		return old;
 	}
 
 	@Override
