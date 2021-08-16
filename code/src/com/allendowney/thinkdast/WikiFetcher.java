@@ -4,11 +4,14 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.util.Iterator;
 
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 
@@ -88,7 +91,7 @@ public class WikiFetcher {
 	public static void main(String[] args) throws IOException {
 		WikiFetcher wf = new WikiFetcher();
 		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
-		Elements paragraphs = wf.readWikipedia(url);
+		Elements paragraphs = wf.fetchWikipedia(url);
 
 		for (Element paragraph: paragraphs) {
 			System.out.println(paragraph);

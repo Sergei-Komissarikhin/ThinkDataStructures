@@ -19,15 +19,25 @@ public class Demo {
 
         //выбирает текст контента и разделяет его по параграфам
         Element content = doc.getElementById("mw-content-text");
-        Elements paragraphs = content.select("p");
+        Elements paragraphs = content.select("a");
 
-        Element firstPara = paragraphs.get(1);
+        Iterator<Element> nodeIterator = paragraphs.iterator();
+        while(nodeIterator.hasNext()){
 
-        //Запуск рекурсивного метода
-        //recursiveDFS(firstPara);
+            Element node = nodeIterator.next();
+                if(node.parent().tag().toString().equals("i")) {
+                    System.out.println(node);
+                }
+        }
+
+
+//        Element firstPara = paragraphs.get(0);
+//
+//        //Запуск рекурсивного метода
+//        recursiveDFS(firstPara);
 
         //Запуск итеративного метода
-        iterativeDFS(firstPara);
+        //iterativeDFS(firstPara);
 
     }
     //Рекурсивный метод поиска в глубину

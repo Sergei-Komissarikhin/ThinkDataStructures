@@ -29,20 +29,20 @@ public class WikiNodeExample {
 				
 		// TODO: avoid selecting paragraphs from sidebars and boxouts
 		Elements paras = content.select("p");
-		Element firstPara = paras.get(0);
+		Element firstPara = paras.get(1);
 		
-		recursiveDFS(firstPara);
-		System.out.println();
+//		recursiveDFS(firstPara);
+//		System.out.println();
 
 		iterativeDFS(firstPara);
 		System.out.println();
 
-		Iterable<Node> iter = new WikiNodeIterable(firstPara);
-		for (Node node: iter) {
-			if (node instanceof TextNode) {
-				System.out.print(node);
-			}
-		}
+//		Iterable<Node> iter = new WikiNodeIterable(firstPara);
+//		for (Node node: iter) {
+//			if (node instanceof TextNode) {
+//				System.out.print(node);
+//			}
+//		}
 	}
 
 	private static void iterativeDFS(Node root) {
