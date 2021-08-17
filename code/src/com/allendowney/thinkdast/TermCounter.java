@@ -37,7 +37,11 @@ public class TermCounter {
 	 */
 	public int size() {
 		// TODO: FILL THIS IN!
-		return 0;
+		int size = 0;
+		for(Integer val: map.values()){
+			size += val;
+		}
+		return size;
 	}
 
 	/**
@@ -145,6 +149,7 @@ public class TermCounter {
 		Elements paragraphs = wf.fetchWikipedia(url);
 
 		TermCounter counter = new TermCounter(url.toString());
+
 		counter.processElements(paragraphs);
 		counter.printCounts();
 	}

@@ -41,6 +41,7 @@ public class Index {
      *
      * @param term
      * @return
+     *
      */
     public Set<TermCounter> get(String term) {
         return index.get(term);
@@ -82,8 +83,14 @@ public class Index {
         // TODO: Your code here
 
         // make a TermCounter and count the terms in the paragraphs
+            TermCounter termCounter = new TermCounter(url);
+            termCounter.processElements(paragraphs);
+
 
         // for each term in the TermCounter, add the TermCounter to the index
+            for(String str : termCounter.keySet()){
+                add(str, termCounter);
+            }
     }
 
     /**
