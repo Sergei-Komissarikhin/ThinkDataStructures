@@ -32,7 +32,7 @@ public class WikiPhilosophy {
         String destination = "https://en.wikipedia.org/wiki/Philosophy";
         String source = "https://en.wikipedia.org/wiki/Java_(programming_language)";
 
-        testConjecture(destination, source, 10);
+        testConjecture(destination, source, 20);
     }
 
     /**
@@ -44,39 +44,42 @@ public class WikiPhilosophy {
      */
     public static void testConjecture(String destination, String source, int limit) throws IOException {
         // TODO: FILL THIS IN!
+
         String url = source;
 
-
         for(int i = 0; i < limit; i++){
-            if(url == destination){
-                System.out.println("I found it!");
+
+            if(url.equals(destination)){
+                System.out.println("****************I found it!********************");
                 break;
             }
+
             if(!visited.contains(url)) {
                 visited.add(url);
             }else{
                 System.out.println("Error. I was here.");
                 break;
             }
-            Elements elements = wf.fetchWikipedia(url).select("a");
 
+            Elements elements = wf.fetchWikipedia(url);
+            WikiParser wp = new WikiParser(elements);
+            Element element = wp.findFirstLink();
 
-
-            for(Element element: elements){
-                String tagParentElement = element.parent().tag().toString();
-                String refOfElement = element.attr("href");
-                if(!tagParentElement.equals("i")
-                        && !tagParentElement.equals("em")
-                        && !refOfElement.contains("(")
-                        && !refOfElement.contains(")")){
-                    url = "https://en.wikipedia.org" + element.attr("href");
-                    System.out.println(refOfElement);
-                    break;
-                }
+            if(element == null){
+                System.out.println("I don't find valid link!");
+                return;
+            }else {
+                System.out.println(element.text());
+                url = "https://en.wikipedia.org" + element.attr("href");
             }
 
 
+
+
+
+
         }
+
         visited.forEach(System.out::println);
 
 

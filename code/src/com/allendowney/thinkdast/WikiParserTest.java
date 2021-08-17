@@ -50,7 +50,7 @@ public class WikiParserTest {
 	 * @throws IOException
 	 */
 	private String findFirstLink(String url) throws IOException {
-		Elements paragraphs = wf.readWikipedia(url);
+		Elements paragraphs = wf.fetchWikipedia(url);
 		WikiParser wp = new WikiParser(paragraphs);
 		Element elt = wp.findFirstLink();
 		String href = elt.attr("href");
