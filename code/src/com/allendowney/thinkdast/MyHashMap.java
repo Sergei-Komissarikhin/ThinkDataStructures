@@ -22,6 +22,7 @@ public class MyHashMap<K, V> extends MyBetterMap<K, V> implements Map<K, V> {
 
 	@Override
 	public V put(K key, V value) {
+
 		V oldValue = super.put(key, value);
 
 		//System.out.println("Put " + key + " in " + map + " size now " + map.size());
@@ -39,8 +40,16 @@ public class MyHashMap<K, V> extends MyBetterMap<K, V> implements Map<K, V> {
 	/**
 	 *
 	 */
+
+
 	protected void rehash() {
 		// TODO: FILL THIS IN!
+		List<MyLinearMap<K,V>> list = maps;
+		makeMaps(maps.size() * 2);
+		for(MyLinearMap <K, V> linearMap: list)
+			for(Map.Entry<K, V> entry: linearMap.getEntries()){
+				put(entry.getKey(), entry.getValue());
+			}
 	}
 
 	/**
