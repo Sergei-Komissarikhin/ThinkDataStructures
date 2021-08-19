@@ -77,7 +77,8 @@ public class JedisIndex {
 	 * @return Set of URLs.
 	 */
 	public Set<String> getURLs(String term) {
-        // FILL THIS IN!
+        //TODO: FILL THIS IN!
+
 		return null;
 	}
 
@@ -88,7 +89,7 @@ public class JedisIndex {
 	 * @return Map from URL to count.
 	 */
 	public Map<String, Integer> getCounts(String term) {
-        // FILL THIS IN!
+        //TODO: FILL THIS IN!
 		return null;
 	}
 
@@ -100,7 +101,7 @@ public class JedisIndex {
 	 * @return
 	 */
 	public Integer getCount(String url, String term) {
-        // FILL THIS IN!
+        //TODO: FILL THIS IN!
 		return null;
 	}
 
@@ -112,6 +113,15 @@ public class JedisIndex {
 	 */
 	public void indexPage(String url, Elements paragraphs) {
 		// TODO: FILL THIS IN!
+		TermCounter termCounter = new TermCounter((url));
+		termCounter.processElements(paragraphs);
+
+
+
+		for(String term: termCounter.keySet()){
+			add(term, termCounter);
+		}
+
 	}
 
 	/**
@@ -232,15 +242,15 @@ public class JedisIndex {
 		Jedis jedis = JedisMaker.make();
 		JedisIndex index = new JedisIndex(jedis);
 
-		//index.deleteTermCounters();
-		//index.deleteURLSets();
-		//index.deleteAllKeys();
-		loadIndex(index);
+		index.deleteTermCounters();
+		index.deleteURLSets();
+		index.deleteAllKeys();
+//		loadIndex(index);
 
-		Map<String, Integer> map = index.getCounts("the");
-		for (Entry<String, Integer> entry: map.entrySet()) {
-			System.out.println(entry);
-		}
+//		Map<String, Integer> map = index.getCounts("the");
+//		for (Entry<String, Integer> entry: map.entrySet()) {
+//			System.out.println(entry);
+//		}
 	}
 
 	/**
@@ -253,11 +263,11 @@ public class JedisIndex {
 		WikiFetcher wf = new WikiFetcher();
 
 		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
-		Elements paragraphs = wf.readWikipedia(url);
+		Elements paragraphs = wf.fetchWikipedia(url);
 		index.indexPage(url, paragraphs);
 
 		url = "https://en.wikipedia.org/wiki/Programming_language";
-		paragraphs = wf.readWikipedia(url);
+		paragraphs = wf.fetchWikipedia(url);
 		index.indexPage(url, paragraphs);
 	}
 }

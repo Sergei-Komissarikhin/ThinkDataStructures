@@ -22,3 +22,4 @@ hs_err_pid*
 /solutions/solutions.iml
 /.idea/ThinkDataStructures.iml
 /.idea/vcs.xml
+/code/src/resources/redis_url.txt

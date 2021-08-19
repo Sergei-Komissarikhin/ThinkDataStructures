@@ -9,6 +9,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLDecoder;
+import java.util.Arrays;
 
 import redis.clients.jedis.Jedis;
 
@@ -46,6 +47,7 @@ public class JedisMaker {
 			if (line == null) break;
 			sb.append(line);
 		}
+
 		br.close();
 
 		// parse the URL
@@ -112,7 +114,6 @@ public class JedisMaker {
 	    // Set
 	    jedis.sadd("myset", "element1", "element2", "element3");
 	    System.out.println("element2 is member: " + jedis.sismember("myset", "element2"));
-
 	    // List
 	    jedis.rpush("mylist", "element1", "element2", "element3");
 	    System.out.println("element at index 1: " + jedis.lindex("mylist", 1));
