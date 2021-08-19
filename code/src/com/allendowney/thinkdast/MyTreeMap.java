@@ -3,13 +3,7 @@
  */
 package com.allendowney.thinkdast;
 
-import java.util.Collection;
-import java.util.Deque;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Implementation of a Map using a binary search tree.
@@ -20,220 +14,275 @@ import java.util.Set;
  */
 public class MyTreeMap<K, V> implements Map<K, V> {
 
-	private int size = 0;
-	private Node root = null;
+    private int size = 0;
+    private Node root = null;
 
-	/**
-	 * Represents a node in the tree.
-	 *
-	 */
-	protected class Node {
-		public K key;
-		public V value;
-		public Node left = null;
-		public Node right = null;
+    /**
+     * Represents a node in the tree.
+     *
+     */
+    protected class Node {
+        public K key;
+        public V value;
+        public Node left = null;
+        public Node right = null;
 
-		/**
-		 * @param key
-		 * @param value
-		 * @param left
-		 * @param right
-		 */
-		public Node(K key, V value) {
-			this.key = key;
-			this.value = value;
-		}
-	}
+        /**
+         * @param key
+         * @param value
+         * @param left
+         * @param right
+         */
+        public Node(K key, V value) {
+            this.key = key;
+            this.value = value;
+        }
+    }
 
-	@Override
-	public void clear() {
-		size = 0;
-		root = null;
-	}
+    @Override
+    public void clear() {
+        size = 0;
+        root = null;
+    }
 
-	@Override
-	public boolean containsKey(Object target) {
-		return findNode(target) != null;
-	}
+    @Override
+    public boolean containsKey(Object target) {
+        return findNode(target) != null;
+    }
 
-	/**
-	 * Returns the entry that contains the target key, or null if there is none.
-	 *
-	 * @param target
-	 */
-	private Node findNode(Object target) {
-		// some implementations can handle null as a key, but not this one
-		if (target == null) {
-			throw new IllegalArgumentException();
-		}
+    /**
+     * Returns the entry that contains the target key, or null if there is none.
+     *
+     * @param target
+     */
+    private Node findNode(Object target) {
+        // some implementations can handle null as a key, but not this one
+        if (target == null) {
+            throw new IllegalArgumentException();
+        }
 
-		// something to make the compiler happy
-		@SuppressWarnings("unchecked")
-		Comparable<? super K> k = (Comparable<? super K>) target;
+        // something to make the compiler happy
+        @SuppressWarnings("unchecked")
+        Comparable<? super K> k = (Comparable<? super K>) target;
 
-		// TODO: FILL THIS IN!
-		return null;
-	}
+        // TODO: FILL THIS IN!
+        Node node = root;
+        while (node != null) {
+            int resCompare = k.compareTo(node.key);
+            if (resCompare < 0) {
+                node = node.left;
+                continue;
+            }
+            if (resCompare > 0) {
+                node = node.right;
+                continue;
+            }
+            return node;
+        }
+        return null;
+    }
 
-	/**
-	 * Compares two keys or two values, handling null correctly.
-	 *
-	 * @param target
-	 * @param obj
-	 * @return
-	 */
-	private boolean equals(Object target, Object obj) {
-		if (target == null) {
-			return obj == null;
-		}
-		return target.equals(obj);
-	}
+    /**
+     * Compares two keys or two values, handling null correctly.
+     *
+     * @param target
+     * @param obj
+     * @return
+     */
+    private boolean equals(Object target, Object obj) {
+        if (target == null) {
+            return obj == null;
+        }
+        return target.equals(obj);
+    }
 
-	@Override
-	public boolean containsValue(Object target) {
-		return containsValueHelper(root, target);
-	}
+    @Override
+    public boolean containsValue(Object target) {
+        return containsValueHelper(root, target);
+    }
 
-	private boolean containsValueHelper(Node node, Object target) {
-		// TODO: FILL THIS IN!
-		return false;
-	}
+    private boolean containsValueHelper(Node node, Object target) {
+        // TODO: FILL THIS IN!
+        if(node == null) return false;
+        if(node.value.equals(target)){
+            return true;
+        }
+        return containsValueHelper(node.left, target) || containsValueHelper(node.right, target);
 
-	@Override
-	public Set<Map.Entry<K, V>> entrySet() {
-		throw new UnsupportedOperationException();
-	}
+    }
 
-	@Override
-	public V get(Object key) {
-		Node node = findNode(key);
-		if (node == null) {
-			return null;
-		}
-		return node.value;
-	}
+    @Override
+    public Set<Map.Entry<K, V>> entrySet() {
+        throw new UnsupportedOperationException();
+    }
 
-	@Override
-	public boolean isEmpty() {
-		return size == 0;
-	}
+    @Override
+    public V get(Object key) {
+        Node node = findNode(key);
+        if (node == null) {
+            return null;
+        }
+        return node.value;
+    }
 
-	@Override
-	public Set<K> keySet() {
-		Set<K> set = new LinkedHashSet<K>();
-		// TODO: FILL THIS IN!
-		return set;
-	}
+    @Override
+    public boolean isEmpty() {
+        return size == 0;
+    }
 
-	@Override
-	public V put(K key, V value) {
-		if (key == null) {
-			throw new NullPointerException();
-		}
-		if (root == null) {
-			root = new Node(key, value);
-			size++;
-			return null;
-		}
-		return putHelper(root, key, value);
-	}
+    @Override
+    public Set<K> keySet() {
+        Set<K> set = new LinkedHashSet<K>();
+        // TODO: FILL THIS IN!
+        if(root == null){
+            return set;
+        }
+        Node node = root;
+        set = inOrder(set, node);
+        return set;
+    }
+    public Set<K> inOrder(Set<K> set, Node node){
+        if(node == null){
+            return set;
+        }
+        inOrder(set, node.left);
+        set.add(node.key);
+        inOrder(set, node.right);
+        return set;
 
-	private V putHelper(Node node, K key, V value) {
-		// TODO: FILL THIS IN!
-		return null;
-	}
+    }
+    @Override
+    public V put(K key, V value) {
+        if (key == null) {
+            throw new NullPointerException();
+        }
+        if (root == null) {
+            root = new Node(key, value);
+            size++;
+            return null;
+        }
+        return putHelper(root, key, value);
+    }
 
-	@Override
-	public void putAll(Map<? extends K, ? extends V> map) {
-		for (Map.Entry<? extends K, ? extends V> entry: map.entrySet()) {
-			put(entry.getKey(), entry.getValue());
-		}
-	}
+    private V putHelper(Node node, K key, V value) {
+        // TODO: FILL THIS IN!
+        Comparable<? super K> k = (Comparable<? super K>) key;
+        int resCompare = k.compareTo(node.key);
 
-	@Override
-	public V remove(Object key) {
-		// OPTIONAL TODO: FILL THIS IN!
-		throw new UnsupportedOperationException();
-	}
+        if(resCompare < 0){
+            if(node.left == null){
+                node.left = makeNode(key, value);
+                size++;
+                return null;
+            }else{
+                return putHelper(node.left, key, value);
+            }
+        }else if (resCompare > 0){
+            if(node.right == null){
+                node.right = makeNode(key, value);
+                size++;
+                return null;
+            }else{
+                return putHelper(node.right, key, value);
+            }
+        }else{
+            V val = node.value;
+            node.value = value;
+            return val;
+        }
+    }
 
-	@Override
-	public int size() {
-		return size;
-	}
+    @Override
+    public void putAll(Map<? extends K, ? extends V> map) {
+        for (Map.Entry<? extends K, ? extends V> entry : map.entrySet()) {
+            put(entry.getKey(), entry.getValue());
+        }
+    }
 
-	@Override
-	public Collection<V> values() {
-		Set<V> set = new HashSet<V>();
-		Deque<Node> stack = new LinkedList<Node>();
-		stack.push(root);
-		while (!stack.isEmpty()) {
-			Node node = stack.pop();
-			if (node == null) continue;
-			set.add(node.value);
-			stack.push(node.left);
-			stack.push(node.right);
-		}
-		return set;
-	}
+    @Override
+    public V remove(Object key) {
+        // OPTIONAL TODO: FILL THIS IN!
+        throw new UnsupportedOperationException();
+    }
 
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) {
-		Map<String, Integer> map = new MyTreeMap<String, Integer>();
-		map.put("Word1", 1);
-		map.put("Word2", 2);
-		Integer value = map.get("Word1");
-		System.out.println(value);
+    @Override
+    public int size() {
+        return size;
+    }
 
-		for (String key: map.keySet()) {
-			System.out.println(key + ", " + map.get(key));
-		}
-	}
+    @Override
+    public Collection<V> values() {
+        Set<V> set = new HashSet<V>();
+        Deque<Node> stack = new LinkedList<Node>();
+        stack.push(root);
+        while (!stack.isEmpty()) {
+            Node node = stack.pop();
+            if (node == null) continue;
+            set.add(node.value);
+            stack.push(node.left);
+            stack.push(node.right);
+        }
+        return set;
+    }
 
-	/**
-	 * Makes a node.
-	 *
-	 * This is only here for testing purposes.  Should not be used otherwise.
-	 *
-	 * @param key
-	 * @param value
-	 * @return
-	 */
-	public MyTreeMap<K, V>.Node makeNode(K key, V value) {
-		return new Node(key, value);
-	}
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        Map<String, Integer> map = new MyTreeMap<String, Integer>();
+        map.put("Word1", 1);
+        map.put("Word2", 2);
+        Integer value = map.get("Word1");
+        System.out.println(value);
 
-	/**
-	 * Sets the instance variables.
-	 *
-	 * This is only here for testing purposes.  Should not be used otherwise.
-	 *
-	 * @param node
-	 * @param size
-	 */
-	public void setTree(Node node, int size ) {
-		this.root = node;
-		this.size = size;
-	}
+        for (String key : map.keySet()) {
+            System.out.println(key + ", " + map.get(key));
+        }
+    }
 
-	/**
-	 * Returns the height of the tree.
-	 *
-	 * This is only here for testing purposes.  Should not be used otherwise.
-	 *
-	 * @return
-	 */
-	public int height() {
-		return heightHelper(root);
-	}
+    /**
+     * Makes a node.
+     *
+     * This is only here for testing purposes.  Should not be used otherwise.
+     *
+     * @param key
+     * @param value
+     * @return
+     */
+    public MyTreeMap<K, V>.Node makeNode(K key, V value) {
+        return new Node(key, value);
+    }
 
-	private int heightHelper(Node node) {
-		if (node == null) {
-			return 0;
-		}
-		int left = heightHelper(node.left);
-		int right = heightHelper(node.right);
-		return Math.max(left, right) + 1;
-	}
+    /**
+     * Sets the instance variables.
+     *
+     * This is only here for testing purposes.  Should not be used otherwise.
+     *
+     * @param node
+     * @param size
+     */
+    public void setTree(Node node, int size) {
+        this.root = node;
+        this.size = size;
+    }
+
+    /**
+     * Returns the height of the tree.
+     *
+     * This is only here for testing purposes.  Should not be used otherwise.
+     *
+     * @return
+     */
+    public int height() {
+        return heightHelper(root);
+    }
+
+    private int heightHelper(Node node) {
+        if (node == null) {
+            return 0;
+        }
+        int left = heightHelper(node.left);
+        int right = heightHelper(node.right);
+        return Math.max(left, right) + 1;
+    }
 }
