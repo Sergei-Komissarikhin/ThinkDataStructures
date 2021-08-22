@@ -57,6 +57,7 @@ public class JedisIndex {
 	 */
 	public boolean isIndexed(String url) {
 		String redisKey = termCounterKey(url);
+
 		return jedis.exists(redisKey);
 	}
 	
@@ -78,31 +79,35 @@ public class JedisIndex {
 	 */
 	public Set<String> getURLs(String term) {
         //TODO: FILL THIS IN!
-
-		return null;
+		return getCounts(term).keySet();
 	}
 
     /**
 	 * Looks up a term and returns a map from URL to count.
-	 * 
+	 *
 	 * @param term
 	 * @return Map from URL to count.
 	 */
 	public Map<String, Integer> getCounts(String term) {
         //TODO: FILL THIS IN!
-		return null;
+		Map<String, Integer> map = new HashMap<>();
+		jedis.hgetAll(urlSetKey(term)).forEach((k,v) -> {
+			map.put(k.length() > 12 ? "https:" + k.split(":")[2] : "", Integer.valueOf(v));
+		});
+
+		return map;
 	}
 
     /**
 	 * Returns the number of times the given term appears at the given URL.
-	 * 
+	 *
 	 * @param url
 	 * @param term
 	 * @return
 	 */
 	public Integer getCount(String url, String term) {
         //TODO: FILL THIS IN!
-		return null;
+		return getCounts(term).get(url);
 	}
 
 	/**
@@ -112,15 +117,17 @@ public class JedisIndex {
 	 * @param paragraphs  Collection of elements that should be indexed.
 	 */
 	public void indexPage(String url, Elements paragraphs) {
+
 		// TODO: FILL THIS IN!
 		TermCounter termCounter = new TermCounter((url));
 		termCounter.processElements(paragraphs);
 
-
+		Transaction t = jedis.multi();
 
 		for(String term: termCounter.keySet()){
-			add(term, termCounter);
+			t.hset( urlSetKey(term), termCounterKey(url), termCounter.get(term).toString());
 		}
+		t.exec();
 
 	}
 
@@ -242,15 +249,18 @@ public class JedisIndex {
 		Jedis jedis = JedisMaker.make();
 		JedisIndex index = new JedisIndex(jedis);
 
-		index.deleteTermCounters();
-		index.deleteURLSets();
-		index.deleteAllKeys();
-//		loadIndex(index);
+//		index.deleteTermCounters();
+//		index.deleteURLSets();
+//		index.deleteAllKeys();
+		loadIndex(index);
+//		System.out.println(index.getCounts("the"));
+//		index.printIndex();
+//
 
-//		Map<String, Integer> map = index.getCounts("the");
-//		for (Entry<String, Integer> entry: map.entrySet()) {
-//			System.out.println(entry);
-//		}
+		Map<String, Integer> map = index.getCounts("the");
+		for (Entry<String, Integer> entry: map.entrySet()) {
+			System.out.println(entry);
+		}
 	}
 
 	/**
@@ -265,7 +275,7 @@ public class JedisIndex {
 		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
 		Elements paragraphs = wf.fetchWikipedia(url);
 		index.indexPage(url, paragraphs);
-
+		System.out.println(index.isIndexed(url));
 		url = "https://en.wikipedia.org/wiki/Programming_language";
 		paragraphs = wf.fetchWikipedia(url);
 		index.indexPage(url, paragraphs);
