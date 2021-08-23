@@ -68,7 +68,7 @@ public class WikiPhilosophy {
                 return;
             }else {
                 System.out.println(element.text());
-                url = element.attr("abs:href");
+                url = element.absUrl("href");
 
             }
         }
