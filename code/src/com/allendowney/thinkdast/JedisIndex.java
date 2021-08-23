@@ -78,8 +78,7 @@ public class JedisIndex {
 	 */
 	public Set<String> getURLs(String term) {
         //TODO: FILL THIS IN!
-
-		return null;
+		return jedis.smembers(urlSetKey(term));
 	}
 
     /**
@@ -90,7 +89,32 @@ public class JedisIndex {
 	 */
 	public Map<String, Integer> getCounts(String term) {
         //TODO: FILL THIS IN!
-		return null;
+		Map<String, Integer> map = new HashMap<>();
+
+		for(String url: getURLs(term)){
+			map.put(url, getCount(url, term));
+		}
+		return map;
+	}
+
+	public Map<String, Integer> getCountsFaster(String term){
+		List<String> urls = new ArrayList<>(getURLs(term));
+
+		Transaction t = jedis.multi();
+
+		for(String url: urls){
+			String redisKey = termCounterKey(url);
+			t.hget(redisKey, term);
+		}
+
+		List<Object> counts = t.exec();
+
+		int i = 0;
+		Map<String, Integer> map = new HashMap<>();
+		for(String url: urls)
+		map.put(url, Integer.valueOf((String)counts.get(i++)));
+
+		return map;
 	}
 
     /**
@@ -102,7 +126,7 @@ public class JedisIndex {
 	 */
 	public Integer getCount(String url, String term) {
         //TODO: FILL THIS IN!
-		return null;
+		return Integer.valueOf(jedis.hget(termCounterKey(url), term));
 	}
 
 	/**
@@ -116,12 +140,14 @@ public class JedisIndex {
 		TermCounter termCounter = new TermCounter((url));
 		termCounter.processElements(paragraphs);
 
-
-
+		Transaction t = jedis.multi();
+		t.del(termCounterKey(url));
 		for(String term: termCounter.keySet()){
-			add(term, termCounter);
+			t.hset(termCounterKey(url), term, termCounter.get(term).toString());
+			t.sadd(urlSetKey(term),url);
 		}
 
+		t.exec();
 	}
 
 	/**
@@ -246,8 +272,11 @@ public class JedisIndex {
 		index.deleteURLSets();
 		index.deleteAllKeys();
 //		loadIndex(index);
+//		index.printIndex();
+//		System.out.println(index.urlSetKeys());
+//		System.out.println(index.termCounterKeys());
 
-//		Map<String, Integer> map = index.getCounts("the");
+//		Map<String, Integer> map = index.getCountsFaster("the");
 //		for (Entry<String, Integer> entry: map.entrySet()) {
 //			System.out.println(entry);
 //		}
@@ -263,11 +292,11 @@ public class JedisIndex {
 		WikiFetcher wf = new WikiFetcher();
 
 		String url = "https://en.wikipedia.org/wiki/Java_(programming_language)";
-		Elements paragraphs = wf.fetchWikipedia(url);
+		Elements paragraphs = wf.readWikipedia(url);
 		index.indexPage(url, paragraphs);
 
 		url = "https://en.wikipedia.org/wiki/Programming_language";
-		paragraphs = wf.fetchWikipedia(url);
+		paragraphs = wf.readWikipedia(url);
 		index.indexPage(url, paragraphs);
 	}
 }
