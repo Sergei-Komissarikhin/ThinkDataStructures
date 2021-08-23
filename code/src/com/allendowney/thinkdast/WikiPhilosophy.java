@@ -68,18 +68,10 @@ public class WikiPhilosophy {
                 return;
             }else {
                 System.out.println(element.text());
-                url = "https://en.wikipedia.org" + element.attr("href");
+                url = element.attr("abs:href");
+
             }
-
-
-
-
-
-
         }
-
         visited.forEach(System.out::println);
-
-
     }
 }

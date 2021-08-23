@@ -7,6 +7,8 @@ import java.util.Map.Entry;
 import java.util.Queue;
 
 import org.jsoup.nodes.Element;
+import org.jsoup.nodes.Node;
+import org.jsoup.nodes.TextNode;
 import org.jsoup.select.Elements;
 
 import redis.clients.jedis.Jedis;
@@ -67,7 +69,9 @@ public class WikiCrawler {
 	// NOTE: absence of access level modifier means package-level
 	void queueInternalLinks(Elements paragraphs) {
         // TODO: FILL THIS IN!
+
 	}
+
 
 	public static void main(String[] args) throws IOException {
 		// make a WikiCrawler
@@ -75,6 +79,7 @@ public class WikiCrawler {
 		JedisIndex index = new JedisIndex(jedis);
 		String source = "https://en.wikipedia.org/wiki/Java_(programming_language)";
 		WikiCrawler wc = new WikiCrawler(source, index);
+
 		
 		// for testing purposes, load up the queue
 		Elements paragraphs = wf.fetchWikipedia(source);
@@ -90,6 +95,7 @@ public class WikiCrawler {
 		} while (res == null);
 		
 		Map<String, Integer> map = index.getCounts("the");
+
 		for (Entry<String, Integer> entry: map.entrySet()) {
 			System.out.println(entry);
 		}
