@@ -1,13 +1,9 @@
 package com.allendowney.thinkdast;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.Map.Entry;
+import java.util.stream.Collectors;
 
 import redis.clients.jedis.Jedis;
 
@@ -61,7 +57,16 @@ public class WikiSearch {
 	 */
 	public WikiSearch or(WikiSearch that) {
 		// TODO: FILL THIS IN!
-		return null;
+			String key;
+			for(Entry<String, Integer> entry: that.map.entrySet()){
+				key = entry.getKey();
+				if(this.map.containsKey(key)){
+					this.map.put(key, totalRelevance(this.getRelevance(key), that.getRelevance(key)));
+				}else {
+					this.map.put(key, that.getRelevance(key));
+				}
+		}
+		return new WikiSearch(map);
 	}
 
 	/**
@@ -71,8 +76,15 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch and(WikiSearch that) {
-		// TODO: FILL THIS IN!
-		return null;
+		Map<String, Integer> map = new HashMap<>();
+		String key;
+		for(Entry<String, Integer> entry: that.map.entrySet()) {
+			key = entry.getKey();
+			if (this.map.containsKey(key)) {
+				map.put(key, totalRelevance(this.getRelevance(key), that.getRelevance(key)));
+			}
+		}
+		return new WikiSearch(map);
 	}
 
 	/**
@@ -82,8 +94,15 @@ public class WikiSearch {
 	 * @return New WikiSearch object.
 	 */
 	public WikiSearch minus(WikiSearch that) {
-		// TODO: FILL THIS IN!
-		return null;
+		Map<String, Integer> map = new HashMap<>();
+		String key;
+		for(Entry<String, Integer> entry: this.map.entrySet()) {
+			key = entry.getKey();
+			if (!that.map.containsKey(key)) {
+				map.put(key, this.getRelevance(key));
+			}
+		}
+		return new WikiSearch(map);
 	}
 
 	/**
@@ -105,7 +124,9 @@ public class WikiSearch {
 	 */
 	public List<Entry<String, Integer>> sort() {
 		// TODO: FILL THIS IN!
-		return null;
+		List<Entry<String, Integer>> list = new ArrayList<>(map.entrySet());
+		list.sort(Comparator.comparing(Entry::getValue));
+		return list;
 	}
 
 
@@ -133,7 +154,7 @@ public class WikiSearch {
 		WikiSearch search1 = search(term1, index);
 		search1.print();
 
-		// search for the second term
+//		// search for the second term
 		String term2 = "programming";
 		System.out.println("Query: " + term2);
 		WikiSearch search2 = search(term2, index);
