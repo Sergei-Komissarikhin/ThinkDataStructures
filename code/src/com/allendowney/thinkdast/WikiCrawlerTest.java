@@ -16,6 +16,7 @@ import org.junit.Test;
 
 import redis.clients.jedis.Jedis;
 
+
 /**
  * @author downey
  *
@@ -62,15 +63,15 @@ public class WikiCrawlerTest {
 		String url3 = "https://en.wikipedia.org/wiki/Concurrent_computing";
 
 		String res = wc.crawl(true);
-		assertThat(url1.equals(res), is(true));
+		assertThat(res.equals(url1), is(true));
 		assertThat(wc.queueSize(), is(396));
 
 		res = wc.crawl(true);
-		assertThat(url2.equals(res), is(true));
+		assertThat(res.equals(url2), is(true));
 		assertThat(wc.queueSize(), is(653));
 
 		res = wc.crawl(true);
-		assertThat(url3.equals(res), is(true));
+		assertThat(res.equals(url3), is(true));
 		assertThat(wc.queueSize(), is(704));
 
 		Map<String, Integer> map = index.getCounts("the");

@@ -73,8 +73,10 @@ public class WikiCrawler {
 			paragraphs = wf.fetchWikipedia(url);
 		}
 		index.indexPage(url, paragraphs);
-		queueInternalLinks(paragraphs);		
+		queueInternalLinks(paragraphs);
+		System.out.println(queueSize());
 		return url;
+
 	}
 
 	/**

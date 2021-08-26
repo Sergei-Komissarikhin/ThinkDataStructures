@@ -124,6 +124,7 @@ public class JedisMaker {
 	    System.out.println("frequency of word1: " + jedis.hget("myhash", "word1"));
 	    System.out.println("frequency of word2: " + jedis.hget("myhash", "word2"));
 
+	    jedis.del("myhash", "mylist", "myset", "mykey");
 	    jedis.close();
 	}
 }
